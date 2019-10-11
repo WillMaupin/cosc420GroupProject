@@ -16,9 +16,15 @@ _Bool DBUG = false;
 // #include "debug.h"
 
 typedef struct Node{
-  struct Node *parent, *lptr, *rptr;
+  struct Node *parent,
+              *lptr,
+              *rptr;
+
   _Bool winningMove;
-  int id, nodes_in_subtree;
+
+  int id,
+      nodes_in_subtree;
+
 }Node;
 
 typedef struct BinaryTree{
@@ -28,7 +34,7 @@ typedef struct BinaryTree{
 }BinaryTree;
 
 // function header, function defined below
-int genTree(BinaryTree *tree, Node* parent, int size_needed,
+void genTree(BinaryTree *tree, Node* parent, int size_needed,
     int current_size);
 
 void insertNode(Node *n, int id){
@@ -55,8 +61,6 @@ void initBTree(BinaryTree* tree, int size){
     insertNode(&root, 0);
     tree->root = root;
     tree->nodes_in_tree = 1;
-    // tree->levels_in_tree = 1;
-    // printf("%d\n", size);
     genTree(tree, &tree->root, size, 0);
 }
 
@@ -82,19 +86,24 @@ int countNodes(BinaryTree *node){
 // recursively generate tree
 // tree: does not change in recursive calls,
 // parent: parent of added nodes
-// n: number of child nodes
-// level: level of tree of parent node
-int genTree(BinaryTree *tree, Node* parent, int nchild, int id)
-{
-    if(DBUG) printf("gT nc:%d id:%d\n", nchild, id);
+// k: level of tree
+// id: node identifier
+void genTree(BinaryTree *tree, Node* parent, int k, int id){
 
-    if(nchild > 1){
-        Node nlptr, nrptr;
-        parent->lptr = &nlptr;
-        genTree(tree, parent->lptr, nchild - 1, (id*2)+1);
-        parent->rptr = &nrptr;
-        genTree(tree, parent->rptr, nchild - 2, (id*2)+2);
-
+    if(k == 0){
+      return;
+    }else if(k == 1){
+      if(DBUG) printf("gT nc:%d id:%d\n", k, id);
+      Node nlptr, nrptr;
+      parent->lptr = &nlptr;
+      genTree(tree, parent->lptr, k - 1, (id*2)+1);
+    }else {                // k > 1
+      if(DBUG) printf("gT nc:%d id:%d\n", k, id);
+      Node nlptr, nrptr;
+      parent->lptr = &nlptr;
+      genTree(tree, parent->lptr, k - 1, (id*2)+1);
+      parent->rptr = &nrptr;
+      genTree(tree, parent->rptr, k - 2, (id*2)+2);
     }
 }
 

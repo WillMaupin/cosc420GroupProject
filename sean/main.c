@@ -5,8 +5,6 @@
 
 #include "tree.h"
 
-// _Bool
-
 int main(int argc, char** argv){
     if(argc == 1){
         printf("Useage: ./[executable] [size of tree] [flags]");
@@ -29,7 +27,7 @@ int main(int argc, char** argv){
     if(DBUG)
         printf("nprocs: %d\nsize: %d\n", nprocs, atoi(argv[1]));
 
-    if(rank==0){
+    if(rank==0 && atoi(argv[1]) > 0){
         BinaryTree tree;
         initBTree(&tree, atoi(argv[1]));
     }
