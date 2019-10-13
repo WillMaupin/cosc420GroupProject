@@ -1,9 +1,7 @@
-#ifndef TREE_H
-#define TREE_H
-
-// #define true 1
-// #define false 0
-// _Bool DBUG = false;
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
 
 struct Node{
   struct Node *l, *r;
@@ -19,28 +17,20 @@ struct Node* newNode(int id){
   return(node);
 }
 
-//recursively generates subtrees
-//parent:
-//k: level of tree
-//NOTE:
-//  was getting an off-by-one, changed if and else if statements:
-//    if(k==0){...}else if(k == 1){...
-//  to
-//    if(k==1){...}else if(k == 2){...
-//  not sure what is happening or why it works, but it seems to
-//  do what i want it to do
+// recursively generate tree
+// parent: parent of added nodes
+// k: level of tree
 struct Node* genTree(struct Node* parent, int k){
-
-  if(k == 1){
-    printf("null\n");
+  if(k == 0){
+    // printf("null\n");
     return NULL;
-  }else if(k == 2){
-    printf("gT k:%d id:%d\n", k, parent->id);
+  }else if(k == 1){
+    // printf("gT k:%d id:%d\n", k, parent->id);
 
     parent->l = newNode(parent->id * 2 + 1);
     genTree(parent->l, k-1);
   }else { // k > 1
-    printf("gT k:%d id:%d\n", k, parent->id);
+    // printf("gT k:%d id:%d\n", k, parent->id);
 
     parent->l = newNode(parent->id * 2 + 1);
     genTree(parent->l, k-1);
@@ -60,4 +50,15 @@ void pre(struct Node* n){
   }
 }
 
-#endif
+int main(int argc, char** argv){
+  int k = atoi(argv[1]);
+
+  struct Node *root = newNode(0);
+  // printf("main n %d\n", root->id);
+  genTree(root, k-1);
+  pre(root);
+
+
+
+  return 0;
+}
