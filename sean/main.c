@@ -29,21 +29,58 @@ int main(int argc, char** argv){
     return 1;
   }
   printf("nprocs: %d\n", nprocs);
+  //fart
 
-  int *all_I = malloc(sizeof(int) * atoi(argv[1]));
-  // if(rank==0){
-    int i;
-    for(i=0;i<atoi(argv[1]);i++){
-      all_I[i] = rollTheDice();
-    // }
+  // int *all_I = malloc(sizeof(int) * atoi(argv[1]));
+  int iterations = atoi(argv[1]);
+  int *local_I = malloc(sizeof(int) * iterations);
+  int *root_I = malloc(sizeof(int) * iterations * nprocs);
 
-    for(i=0;i<atoi(argv[1]);i++){
-      printf("(%d)all_I[%d]: %d\n", rank, i, all_I[i]);
+  for(int i=0; i<iterations; i++){
+    local_I[i] = rollTheDice();
+  }
+  // printf("iterations: %d, it*nprocs: %d\n", iterations, iterations*nprocs);
+  // for(i=0; i<iterations; i++){
+  //   printf("(%d)local_I[%i]: %d\n", rank, i, local_I[i]);
+  // }
+
+  if(rank != 0){
+    printf("%d in send", rank);
+    MPI_Send(local_I, iterations, MPI_INT, 0, 0, world);
+  }else{
+    for(int i = 0; i < nprocs; i++){
+      for(int j = 0; j<iterations; j++){
+        if(i == 0){
+          root_I[j] = local_I[j];
+          printf("root[%d]: %d\n", j, root_I[j]);
+        }else{
+          printf("%d in else\n", i);
+          int *temp = malloc(sizeof(int) * iterations);
+          MPI_Recv(temp, iterations, MPI_INT, i, 0, world, MPI_STATUS_IGNORE);
+          // for(int j = 0; j<iterations; j++){
+          root_I[iterations * i * j] = temp[j];
+          // }
+          printf("root_I[%d]: %d\n", iterations * i * j, root_I[iterations * i * j]);
+        }
+      }
     }
+  }
 
-    }
+  // MPI_Reduce(&local_I, &root_I, 1, MPI_INT, MPI_SUM, 0, world);
+  // if(rank == 0){
+  //   printf("root I: %d\n", root_I);
+  //   int mean, sqrd_diff, variance;
+  //   mean = root_I / (nprocs * atoi(argv[1]));
+       /*variance:
+          -find the mean (above)
+          -for each number, subtract the mean and square the result
+            (the squared difference)
+          -find average of those squared differences
+        */
+  //   printf("variance: %d\n", variance);
+  // }
 
-    MPI_Finalize();
-    // if(rank == 0)   printTree(&tree.root, 0);
-    return 0;
+
+  MPI_Finalize();
+  return 0;
 }
