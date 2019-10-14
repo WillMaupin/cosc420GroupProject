@@ -4,7 +4,7 @@
 #include <time.h>
 
 int rollTheDice(){
-  srand(time(0));
+  // srand();
   int dice_sizes[] = {4,6,8,12,20};
   int roll,             // result of rolling a die
       rolls_to_make[5], // number of dice to roll ('T','C',O','D','I' in problem discripton)
@@ -20,10 +20,10 @@ int rollTheDice(){
     }
   }
 
-  for(i=0;i<5;i++){
-    printf("rtm[%d]: %d\n", i, rolls_to_make[i]);
-  }
-  puts("");
+  // for(i=0;i<5;i++){
+  //   printf("rtm[%d]: %d\n", i, rolls_to_make[i]);
+  // }
+  // puts("");
   return rolls_to_make[4];
 }
 
