@@ -55,41 +55,48 @@ int main(int argc, char** argv){
         if(i == 0){
           root_I[j] = local_I[j];
           sqrd_diff[j] = local_I[j];
-          printf("root[%d]: %d\n", j, root_I[j]);
-          printf("sd[%d]: %d\n", j, sqrd_diff[j]);
+          // printf("root_I[%d]: %d\n", j, root_I[j]);
+          // printf("sd[%d]: %d\n", j, sqrd_diff[j]);
         }else{
           root_I[iterations * i + j] = temp[j];
           sqrd_diff[iterations * i + j] = temp[j];
-          printf("temp[%d]: %d\n", j, temp[j]);
-          printf("root_I[%d]: %d\n", iterations * i + j, root_I[iterations * i + j]);
-          printf("sd[%d]: %d\n", iterations * i + j, sqrd_diff[iterations * i + j]);
+          // printf("temp[%d]: %d\n", j, temp[j]);
+          // printf("root_I[%d]: %d\n", iterations * i + j, root_I[iterations * i + j]);
+          // printf("sd[%d]: %d\n", iterations * i + j, sqrd_diff[iterations * i + j]);
         }
       }
     }
   }
 
   int mean = 0;
+  float variance = 0.0;
 
   if(rank==0){
     for(i = 0; i<iterations*nprocs; i++){
-      printf("s root_I[%d]: %d\n", i, root_I[i]);
-      printf("sd[%d]: %d\n", i, sqrd_diff[i]);
+      // printf("s root_I[%d]: %d\n", i, root_I[i]);
+      // printf("sd[%d]: %d\n", i, sqrd_diff[i]);
       mean += root_I[i];
-      if(i%3 == 2) puts("");
+      // if(i%3 == 2) puts("");
     }
 
     mean /= (iterations * nprocs);
-    printf("\nmean: %d\n", mean);
 
     for(i = 0; i<iterations*nprocs; i++){
-      // printf("sd: %d\n", i, root_I[i]);
-      printf("sd[%d]: %d\n", i, sqrd_diff[i]);
+      // printf("\nmean: %d\n", mean);
+      // printf("rt[%d]: %d\n", i, root_I[i]);
+      // printf("sd[%d]: %d\n", i, sqrd_diff[i]);
       sqrd_diff[i] -= mean;
-      printf("- mean[%d]: %d\n", i, sqrd_diff[i]);
+      // printf("- mean[%d]: %d\n", i, sqrd_diff[i]);
       sqrd_diff[i] *= sqrd_diff[i];
-      printf("sqrt diff[%d]: %d\n", i, sqrd_diff[i]);
-      if(i%3==2) puts("");
+      // printf("sqrt diff[%d]: %d\n", i, sqrd_diff[i]);
+      // if(i%3==2) puts("");
+      variance += sqrd_diff[i];
+      // printf("variance: %f\n\n", variance);
     }
+
+    variance /= (nprocs*iterations);
+    printf("mean: %d\n", mean);
+    printf("final variance: %.4f\n", variance);
   }
 
   /*variance:
@@ -98,7 +105,6 @@ int main(int argc, char** argv){
         (the squared difference)
     -find average of those squared differences
   */
-  //   printf("variance: %d\n", variance);
   // }
 
 
