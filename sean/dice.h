@@ -23,9 +23,46 @@ int rollTheDice(){
   // for(i=0;i<5;i++){
   //   printf("rtm[%d]: %d\n", i, rolls_to_make[i]);
   // }
-  // puts("");
+  // puts
+  // return 1;
+  // return rand() % 2
+
   return rolls_to_make[4];
 }
+
+double variance(int* arr, int n, double mean){
+  double* sqr_diff = malloc(sizeof(double)*n);
+
+  printf("===========================\n");
+  for(int i=0; i<n; i++){
+    printf("arr[%d]: %d\n", i, arr[i]);
+  }
+
+  printf("===========================\n");
+  for(int i=0; i<n; i++){
+    sqr_diff[i] = arr[i] - mean;
+    sqr_diff[i] *= sqr_diff[i];
+    printf("sqr_diff[%d]: %f\n", i, sqr_diff[i]);
+  }
+
+  printf("===========================\n");
+  double v = 0.0;
+  for(int i=0; i<n; i++){
+    v += sqr_diff[i];
+  }
+
+  v/=n;
+  return v;
+} //end variance()
+
+
+/*variance:
+  -find the mean (above)
+  -for each number, subtract the mean and square the result
+      (the squared difference)
+  -find average of those squared differences
+*/
+// }
 
 
 #endif
