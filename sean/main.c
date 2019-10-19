@@ -36,7 +36,7 @@ int main(int argc, char** argv){
   //each processors local array of I values
   int *local_I = malloc(sizeof(int) * iterations);
   //array of all I values from all processes
-  int *root_I = malloc(sizeof(int) * iterations * nprocs);          // 'collection array'
+  if(rank == 0) int *root_I = malloc(sizeof(int) * iterations * nprocs);// 'collection array'
   //array of each I values squared difference (I value - mean)
   double *sqrd_diff = malloc(sizeof(double) * iterations * nprocs); //'collection array'
   int i,j,k;
