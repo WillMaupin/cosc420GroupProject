@@ -25,44 +25,53 @@ int main(int argc, char** argv){
   MPI_Comm_size(world, &nprocs);
   MPI_Comm_rank(world, &rank);
 
+
   if(argc < 2){
     if (rank == 0) printf("Useage: ./[Executable] [Iterations Per Process]\n\n");
     return 1;
   }
 
-  srand(time(0) + rank/* + 200*/);
-  // int *all_I = malloc(sizeof(int) * atoi(argv[1]));
+  srand(time(0) + rank);
   int iterations = atoi(argv[1]);
+  //each processors local array of I values
   int *local_I = malloc(sizeof(int) * iterations);
-  int *root_I = malloc(sizeof(int) * iterations * nprocs);
-  double *sqrd_diff = malloc(sizeof(double) * iterations * nprocs);
+  //array of all I values from all processes
+  int *root_I = malloc(sizeof(int) * iterations * nprocs);          // 'collection array'
+  //array of each I values squared difference (I value - mean)
+  double *sqrd_diff = malloc(sizeof(double) * iterations * nprocs); //'collection array'
   int i,j,k;
 
+  //each processor calls rollDice and stores the result locally
   for(i=0; i<iterations; i++){
-    local_I[i] = rollTheDice();
+    local_I[i] = rollDice();
   }
 
+
   if(rank != 0){
+    //processors other than the root sends its array of I values to the root process
+    //to be used to calculate the variance of all I values
     MPI_Send(local_I, iterations, MPI_INT, 0, 0, world);
+    free(local_I);  // done with processors local arrays
   }else{
+    printf("nprocs: %d\n\n", nprocs); //mostly used for debugging, prints the number of processes being utilized
     for(i = 0; i<nprocs; i++){
-      int *temp = malloc(sizeof(int) * iterations);
+      int *temp = malloc(sizeof(int) * iterations); //temporarily store arrays from other proc.
+      //do not need to send/receive roots array of I values
       if(i!=0)  MPI_Recv(temp, iterations, MPI_INT, i, 0, world, MPI_STATUS_IGNORE);
 
       for(j = 0; j<iterations; j++){
+        //do not need to send/receive root procs array, just read through and move
+        //  to other arrays
         if(i == 0){
           root_I[j] = local_I[j];
           sqrd_diff[j] = local_I[j];
-          // printf("root_I[%d]: %d\n", j, root_I[j]);
-          // printf("sd[%d]: %d\n", j, sqrd_diff[j]);
         }else{
+          //read received arrays into 'collection' arrays
           root_I[iterations * i + j] = temp[j];
           sqrd_diff[iterations * i + j] = temp[j];
-          // printf("temp[%d]: %d\n", j, temp[j]);
-          // printf("root_I[%d]: %d\n", iterations * i + j, root_I[iterations * i + j]);
-          // printf("sd[%d]: %d\n", iterations * i + j, sqrd_diff[iterations * i + j]);
         }
       }
+      free(temp);
     }
 
 
@@ -70,45 +79,34 @@ int main(int argc, char** argv){
     double variance = 0.0;
 
     if(rank==0){
+      //find mean of all I values
       for(i = 0; i<iterations*nprocs; i++){
-        // printf("s root_I[%d]: %d\n", i, root_I[i]);
-        // printf("sd[%d]: %d\n", i, sqrd_diff[i]);
         mean += root_I[i];
-        // if(i%3 == 2) puts("");
       }
-
-      mean /= (iterations * nprocs);
+      //divide sum of all I values by the total number of times run
+      mean /= (iterations * nprocs) - 1;
 
       for(i = 0; i<iterations*nprocs; i++){
-        // printf("\nmean: %d\n", mean);
-        // printf("rt[%d]: %d\n", i, root_I[i]);
-        // printf("sd[%d]: %d\n", i, sqrd_diff[i]);
-        sqrd_diff[i] -= mean;
-        // printf("- mean[%d]: %d\n", i, sqrd_diff[i]);
-        sqrd_diff[i] *= sqrd_diff[i];
-        // printf("sqrt diff[%d]: %d\n", i, sqrd_diff[i]);
-        // if(i%3==2) puts("");
-        variance += sqrd_diff[i];
-        // printf("variance: %f\n\n", variance);
+        sqrd_diff[i] -= mean;         //I value minus mean
+        sqrd_diff[i] *= sqrd_diff[i]; //squaring result from above
+        variance += sqrd_diff[i];     //adding to sum of all variances
       }
 
-      variance /= (nprocs*iterations)-1;
-      // printf("mean: %f\n", mean);
-      // float
-      printf("final variance: %f\n", variance);
-      printf("expected variance: %f\n", ev);
-      printf("difference: %f\n", ev - variance);
+      variance /= (nprocs*iterations)-1;              //average of all variances
+      double ev = 2406376.3623;                        //actual solution
+      printf("calculated v: %.4f\n", variance);       //calculated solution;
+                                                      // variance of all I values
+      printf("===============================\n");
+      printf("expected   v: %11.4f\n", ev);
+      printf("difference:   %.4f\n", ev - variance);  //prints how far off from
+                                                      //the solution this attempt was
+      printf("===============================\n");
     }
   }
-  /*variance:
-    -find the mean (above)
-    -for each number, subtract the mean and square the result
-        (the squared difference)
-    -find average of those squared differences
-  */
-  // }
 
 
   MPI_Finalize();
+  free(root_I);
+  free(sqrd_diff);
   return 0;
 }
