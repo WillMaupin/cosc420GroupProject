@@ -64,7 +64,7 @@ And the actual computations for determining the result require Big_theta((rowsiz
 Big_Theta((N^2)/8) = O(N^2)
 
 
-Problem: 389, 30% difficulty - Sean Brittingham
+Problem: 389, 30% difficulty
 ================================================================================
 An unbiased single 4-sided die is thrown and its value, T, is noted.
   T unbiased 6-sided dice are thrown and their scores are added together.
