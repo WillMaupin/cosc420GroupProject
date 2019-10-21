@@ -1,0 +1,25 @@
+Initially wanted to solve problem sequentially before moving on to a parallel
+solution. First thought was to iterate through a 16 slot array counting
+upwards through 10^16 possible matrixes. 
+This clearly wasn't a feasible option as there were too many values to iterate
+through, so had to continue looking for a solution.
+Then noticed that 6 exterior sums (H, L, P, M, N, O)
+
+	  a b c d
+	  e f g H
+	  i J k L
+	  M N O P
+
+
+could be computed by subtracting 3 shared values in the row/column/diagonal 
+from a sum (a+b+c+d). 
+This saved 6 for loops, making the problem solvable in around a minute
+sequentially.
+Then noticed sequential time could be even further reduced once M was computed. 
+This allowed for j's for loop to also be removed by j = sum - M - g - d.
+This brought the time down to ~6 seconds. 
+From here, using 100 nodes each calculating 1/100th of the matrix, was able
+to get a total count of valid matrixes and reduce them, bringing total time 
+to about .3 seconds.
+By setting a=processID/10 and b=processID%10 was able to cycle through all
+matrix combinations.
