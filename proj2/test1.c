@@ -27,52 +27,30 @@ int main(){
     BSTree tree;
     initBST(&tree);
 
-    BSTNode a;
-    initBSTNode(&a, "mmmm");
+    // BSTNode a;
+    // initBSTNode(&a, "mmmm");
 
-    tree.root = insertBSTNode(tree.root, &a);
-    printBST(tree);
+    // tree.root = insertBSTNode(tree.root, &a);
+    tree.root = insert(tree, "mmmm");
+    // tree.root = insert(tree, "matt");
+    // tree.root = insert(tree, "will");
+    // tree.root = insert(tree, "sean");
 
-///*
-    char** words = malloc(sizeof(char*) * 3);
-    words[0] = "sean";
-    words[1] = "devin";
-    words[2] = "matt";
-    BSTNode *node = malloc(sizeof(BSTNode));
+    printf("%s\n", tree.root->keyword);
+    tree.root->left = NULL;
+    tree.root->right = NULL;
 
+    if(tree.root->left != NULL) printf("tree.root->left\n");
+    if(tree.root->right != NULL)printf("tree.root->right\n");
+    if(tree.root->articles != NULL)printf("tree.root->articles \n");
 
-    for(int i=0; i<2; i++){
-        BSTNode temp = {
-            keyword: words[i],
-            left:NULL,
-            right:NULL,
-            articles:NULL
-        };
+    /*
+    getting inf. recursion when printing... somehow root nodes left pointer is
+    not null, assigned null in multiple places...
+    */
+    // if(tree.root != NULL)   printBST(tree);
+    // else    printf("%s\n", "end");
 
-        node = &temp;
-        tree.root = insertBSTNode(tree.root, node);
-        // tree.root = insertBSTNode(tree.root, &temp);
-
-        printBST(tree);
-    }
-//*/
-
-/*
-    BSTNode b;
-    initBSTNode(&b, "aaaa");
-    tree.root = insertBSTNode(tree.root, &b);
-    printBST(tree);
-
-    BSTNode c;
-    initBSTNode(&c, "zzzz");
-    tree.root = insertBSTNode(tree.root, &c);
-    printBST(tree);
-
-    BSTNode d;
-    initBSTNode(&d, "ssss");
-    tree.root = insertBSTNode(tree.root, &d);
-    printBST(tree);
-*/
 
     MPI_Finalize();
     return 0;
