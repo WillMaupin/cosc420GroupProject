@@ -40,8 +40,9 @@ BSTNode* insertBSTNode(BSTNode *node, BSTNode* new_node){
     if(node == NULL) {
         /*  tree is empty, just need to insert node at root */
         // printf("Empty tree\n"); //dbugging
-        node = new_node;
-        return node;
+
+        // node = new_node;
+        return new_node;
     }else{
         /* tree is not empty */
 

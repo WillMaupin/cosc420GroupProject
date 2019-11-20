@@ -24,18 +24,16 @@ void printBST(BSTree tree){
 int main(){
     MPI_Init(NULL, NULL);
 
-    BSTree tree = { root:NULL };
-    // initBST(&tree);
+    BSTree tree;
+    initBST(&tree);
 
-    BSTNode a = {   keyword:"mmmm",
-                    left:NULL,
-                    right:NULL,
-                    articles:NULL   };
+    BSTNode a;
+    initBSTNode(&a, "mmmm");
 
     tree.root = insertBSTNode(tree.root, &a);
     printBST(tree);
 
-/*
+///*
     char** words = malloc(sizeof(char*) * 3);
     words[0] = "sean";
     words[1] = "devin";
@@ -57,14 +55,9 @@ int main(){
 
         printBST(tree);
     }
-*/
+//*/
 
-//*
-    // BSTNode b = {   keyword:"aaaa",
-    //                 left:NULL,
-    //                 right:NULL,
-    //                 articles:NULL   };
-
+/*
     BSTNode b;
     initBSTNode(&b, "aaaa");
     tree.root = insertBSTNode(tree.root, &b);
@@ -79,8 +72,7 @@ int main(){
     initBSTNode(&d, "ssss");
     tree.root = insertBSTNode(tree.root, &d);
     printBST(tree);
-
-//*/
+*/
 
     MPI_Finalize();
     return 0;
