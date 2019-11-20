@@ -72,7 +72,6 @@ BSTNode* insertBSTNode(BSTNode *node, BSTNode* new_node){
 
             /* add article to nodes linked list here */
             return node;
-
         }
     }
 
