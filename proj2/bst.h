@@ -39,38 +39,42 @@ BSTNode* insertBSTNode(BSTNode *parent_node, BSTNode* node){
 
     if(parent_node == NULL) {
         /*  tree is empty, just need to insert node at root */
-        printf("Empty tree\n"); //dbugging
+        // printf("Empty tree\n"); //dbugging
         return node;
     }else{
         /* tree is not empty */
 
-        printf("tree not empty\n"); //dbugging
+        // printf("tree not empty\n"); //dbugging
         /* determines difference in ascii values between root keyword and keyword of
             node being inserted */
-        int a = strcmp(parent_node->keyword, node->keyword); //temp variable name, needs a better one
+
+        int key = strcmp(parent_node->keyword, node->keyword);
         printf("%d\n", a); //dbugging
-        if(a <= -1){
+        if(key <= -1){
             //str comes before ptr->keyword alphabetically
-            printf("after\n");
+            // printf("after\n");
+
             parent_node->right = insertBSTNode(parent_node->right, node);
             return parent_node;
 
-        } else if (a >= 1){
+        } else if (key >= 1){
             //str comes after ptr->keyword alphabetically
-            printf("before\n");
+            // printf("before\n");
+
             parent_node->left = insertBSTNode(parent_node->left, node);
             return parent_node;
 
         } else {
             // str and ptr->key word are the same word
-            printf("equal\n");
-            return parent_node;
+            // printf("equal\n");
+
             /* add article to nodes linked list here */
+            return parent_node;
 
         }
     }
 
-    printf("end\n");    // dbugging
+    // printf("end\n");    // dbugging
 }
 
 /*displayBST:
@@ -91,26 +95,17 @@ BSTNode* insertBSTNode(BSTNode *parent_node, BSTNode* node){
                     etc.)
 */
 void displayBST(BSTNode *node, int level){
-    // printf("a\n");
     if(node->left != NULL){
-        // printf("b\n");
         displayBST(node->left, level++);
-        // printf("c\n");
     }
-    // printf("d\n");
-    if(node != NULL){
-        // printf("e\n");
-        printf("%d: %s\n", level, node->keyword);
-        // printf("f\n");
-    }
-    // printf("g\n");
-    if(node->right != NULL){
-        // printf("h\n");
-        displayBST(node->right, level++);
-        // printf("i\n");
-    }
-    // printf("j\n");
 
+    if(node != NULL){
+        printf("%d: %s\n", level, node->keyword);
+    }else{  printf("null\n"); }
+
+    if(node->right != NULL){
+        displayBST(node->right, level++);
+    }
 }
 
 #endif

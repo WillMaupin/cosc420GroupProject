@@ -21,7 +21,7 @@ int main(){
     displayBST(tree.root, 0);
     printf("============================================\n");
 
-
+/*
     BSTNode b = {   keyword:"aaaa",
                     left:NULL,
                     right:NULL,
@@ -54,7 +54,7 @@ int main(){
     printf("\n============= tree (preorder) ==============\n");
     displayBST(tree.root, 0);
     printf("============================================\n");
-
+*/
 
     MPI_Finalize();
     return 0;

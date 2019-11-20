@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include<stdio.h>
 
+#include "bst.h"
+
 // enum colors { red, black };    // red=0, black=1
 
 typedef struct BSTNode {
@@ -18,8 +20,8 @@ typedef struct BSTNode {
                     *articles;  //linked list of articles containing this keyword
 
     /*
-    red/black tree stuff is low priority, just putting it in
-    as i go but focusing on bst first
+        red/black tree stuff is low priority, just putting
+        it in as i go but focusing on bst first
     */
     // enum colors color;
 
@@ -36,6 +38,8 @@ void initBSTNode(BSTNode* node, char* str){
     node->left = NULL;
     node->right = NULL;
     node->articles = NULL;
+
+    
 }
 
 
