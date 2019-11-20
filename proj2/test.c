@@ -2,14 +2,35 @@
 #include<stdlib.h>
 #include <string.h>
 
-#include "hash.h"
-#include "node.h"
+#include "bst.h"
+// #include "node.h"
+
+
 
 int main(){
-    HashMap map;        // = malloc(sizeof(HashMap));
-    initHashMap(&map, 23);
+    BSTree tree;
+    initBST(&tree);
 
-    // printf("%s\n", map.head->data);
+
+    // insertBSTNode1(&tree, "keyword");
+
+    BSTNode a = {0, "keyword", NULL, NULL, NULL };
+    insertBSTNode2(tree.root, &a);
+    printf("\n");
+    if(tree.root)   printf("%s\n", tree.root->keyword);
+    else            printf("null\n");
+    // displayBST(tree.root);
+
+    // insertBSTNode1(&tree, "sean");
+
+    // BSTNode b = {1, "sean", NULL, NULL, NULL };
+    // insertBSTNode2(tree.root, &b);
+    // displayBST(tree.root);
+
+    // char* a = malloc(sizeof(char) * 5);
+    // char* b = malloc(sizeof(char) * 5);
+    //
+    // printf("%d\n", strcmp(a,a));
 
     return 0;
 }
