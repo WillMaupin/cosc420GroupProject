@@ -31,15 +31,16 @@ void initBST(BSTree *tree) {
             also used to point to node after being inserted
         node: node to be inserted   */
 
-BSTNode* insertBSTNode(BSTNode *parent_node, BSTNode* node){
+BSTNode* insertBSTNode(BSTNode *node, BSTNode* new_node){
     printf("Welcome to insertBSTNode!!!\n"); // dbugging
 
-    if(node != NULL)        printf("inserting: %s\n", node->keyword); // dbugging
-    if(parent_node != NULL) printf("comparing: %s\n", parent_node->keyword); //dbugging
+    if(new_node != NULL)    printf("inserting: %s\n", new_node->keyword); // dbugging
+    if(node != NULL)        printf("comparing: %s\n", node->keyword); //dbugging
 
-    if(parent_node == NULL) {
+    if(node == NULL) {
         /*  tree is empty, just need to insert node at root */
         // printf("Empty tree\n"); //dbugging
+        node = new_node;
         return node;
     }else{
         /* tree is not empty */
@@ -48,28 +49,28 @@ BSTNode* insertBSTNode(BSTNode *parent_node, BSTNode* node){
         /* determines difference in ascii values between root keyword and keyword of
             node being inserted */
 
-        int key = strcmp(parent_node->keyword, node->keyword);
-        printf("%d\n", a); //dbugging
+        int key = strcmp(node->keyword, new_node->keyword);
+        printf("%d\n", key); //dbugging
         if(key <= -1){
             //str comes before ptr->keyword alphabetically
             // printf("after\n");
 
-            parent_node->right = insertBSTNode(parent_node->right, node);
-            return parent_node;
+            node->right = insertBSTNode(node->right, new_node);
+            return node;
 
         } else if (key >= 1){
             //str comes after ptr->keyword alphabetically
             // printf("before\n");
 
-            parent_node->left = insertBSTNode(parent_node->left, node);
-            return parent_node;
+            node->left = insertBSTNode(node->left, new_node);
+            return node;
 
         } else {
             // str and ptr->key word are the same word
             // printf("equal\n");
 
             /* add article to nodes linked list here */
-            return parent_node;
+            return node;
 
         }
     }

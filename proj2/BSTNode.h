@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include<stdio.h>
 
-#include "bst.h"
-
 // enum colors { red, black };    // red=0, black=1
 
 typedef struct BSTNode {
@@ -33,13 +31,10 @@ typedef struct BSTNode {
         BSTNode a = {keyword:<string>,...};
 */
 void initBSTNode(BSTNode* node, char* str){
-
     node->keyword = str;
     node->left = NULL;
     node->right = NULL;
     node->articles = NULL;
-
-    
 }
 
 

@@ -66,26 +66,17 @@ int main(){
     //                 articles:NULL   };
 
     BSTNode b;
-    initBSTNode(&b);
-    // tree.root = insertBSTNode(tree.root, &b);
+    initBSTNode(&b, "aaaa");
+    tree.root = insertBSTNode(tree.root, &b);
     printBST(tree);
 
-    /*
-
-    BSTNode c = {   keyword:"zzzz",
-                    left:NULL,
-                    right:NULL,
-                    articles:NULL   };
-
+    BSTNode c;
+    initBSTNode(&c, "zzzz");
     tree.root = insertBSTNode(tree.root, &c);
-
     printBST(tree);
 
-    BSTNode d = {   keyword:"ssss",
-                    left:NULL,
-                    right:NULL,
-                    articles:NULL   };
-
+    BSTNode d;
+    initBSTNode(&d, "ssss");
     tree.root = insertBSTNode(tree.root, &d);
     printBST(tree);
 
