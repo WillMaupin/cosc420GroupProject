@@ -15,10 +15,12 @@ typedef struct Node {
 
 void initKeywordNode(Node* node, char* s){
     node->data = s;
+    node->next = NULL;
 }
 
 void initBucket(Node* node, int k){
     node->key = k;
+    node->next = NULL;
 }
 
 #endif

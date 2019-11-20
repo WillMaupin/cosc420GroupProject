@@ -13,20 +13,8 @@ typedef struct HashMap {
     int size;   //size of hashmap
 } HashMap;
 
-void initHashMap(HashMap* map, int s){
-    /*want to create hashmap with size s*/
-
-    map->size = s;
-    
-    // Node* ptr = map->head;
-    // for(int i=0; i<s; i++){
-    //     Node* new_bucket;
-    //     initBucket(new_bucket, i);
-    //
-    //     ptr->next = new_bucket;
-    // }
-}
-
+/*
+*/
 void hash(HashMap* map, Node* node){
     int len = strlen(node->data);
     int key = 1;
@@ -44,8 +32,36 @@ void hash(HashMap* map, Node* node){
     // return key;
 }
 
+/*
+*/
 void insert(HashMap* map, Node* node){
     hash(map, node);
+}
+
+/*
+*/
+void initHashMap(HashMap* map, int size){
+    /*want to create hashmap with size s*/
+    map->size = size;   //set hash table size
+
+    Node temp;
+    initBucket(&temp, 0);
+
+    map->head = &temp;
+    // printf("%d\n", map->head->key);
+
+    for(int i=1; i<size; i++){
+        Node temp;
+        initBucket(&temp, i);
+        Node* ptr = map->head;
+        // if(ptr){printf("next\n");}
+
+        while(ptr->next){
+            printf("one\n");
+            ptr = ptr->next;
+        }
+        printf("here\n");
+    }
 }
 
 #endif
