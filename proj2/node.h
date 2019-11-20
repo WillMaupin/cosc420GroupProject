@@ -1,10 +1,10 @@
 #ifndef NODE_H
 #define NODE_H
 
-// can be used for both hashmap buckets and keyword nodes
+// can be used for both HashTable buckets and keyword nodes
 // do we want seperate structs for each?
 typedef struct Node {
-    char* data;     // hashmap: unused?
+    char* data;     // HashTable: unused?
                     // article node: article ids???
 
     int key;        // hashap: key of bucket,

@@ -6,10 +6,17 @@
 #include "bst.h"
 
 int main(){
-    MPI_Init(NULL, NULL);
+    HashTable t;        // = malloc(sizeof(HashTable));
+    // initHashTable(&map, 23);
+    // printf("%u\n", t.table);
+    initHashTable(&t, 4);
+    // printf("%u\n", t.table);
 
-    BSTree tree = { root:NULL };
-    // initBST(&tree);
+
+    // printf("hello\n");
+    // if(map.head)    printf("%d\n", map.head->key);
+    // if(map.head)    printf("HEAD\n");
+    // printf("final\n");
 
     BSTNode a = {   keyword:"mmmm",
                     left:NULL,
