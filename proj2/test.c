@@ -1,36 +1,61 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include <string.h>
+#include<mpi.h>
 
 #include "bst.h"
-// #include "node.h"
-
-
 
 int main(){
-    BSTree tree;
-    initBST(&tree);
+    MPI_Init(NULL, NULL);
+
+    BSTree tree = { root:NULL };
+    // initBST(&tree);
+
+    BSTNode a = {   keyword:"mmmm",
+                    left:NULL,
+                    right:NULL,
+                    articles:NULL   };
+
+    tree.root = insertBSTNode(tree.root, &a);
+    printf("\n============= tree (preorder) ==============\n");
+    displayBST(tree.root, 0);
+    printf("============================================\n");
 
 
-    // insertBSTNode1(&tree, "keyword");
+    BSTNode b = {   keyword:"aaaa",
+                    left:NULL,
+                    right:NULL,
+                    articles:NULL   };
 
-    BSTNode a = {0, "keyword", NULL, NULL, NULL };
-    insertBSTNode2(tree.root, &a);
-    printf("\n");
-    if(tree.root)   printf("%s\n", tree.root->keyword);
-    else            printf("null\n");
-    // displayBST(tree.root);
+    tree.root = insertBSTNode(tree.root, &b);
+    printf("\n============= tree (preorder) ==============\n");
+    displayBST(tree.root, 0);
+    printf("============================================\n");
 
-    // insertBSTNode1(&tree, "sean");
+    BSTNode c = {   keyword:"zzzz",
+                    left:NULL,
+                    right:NULL,
+                    articles:NULL   };
 
-    // BSTNode b = {1, "sean", NULL, NULL, NULL };
-    // insertBSTNode2(tree.root, &b);
-    // displayBST(tree.root);
+    tree.root = insertBSTNode(tree.root, &c);
 
-    // char* a = malloc(sizeof(char) * 5);
-    // char* b = malloc(sizeof(char) * 5);
-    //
-    // printf("%d\n", strcmp(a,a));
+    printf("\n============= tree (preorder) ==============\n");
+    displayBST(tree.root, 0);
+    printf("============================================\n");
 
+
+    BSTNode d = {   keyword:"ssss",
+                    left:NULL,
+                    right:NULL,
+                    articles:NULL   };
+
+    tree.root = insertBSTNode(tree.root, &d);
+
+    printf("\n============= tree (preorder) ==============\n");
+    displayBST(tree.root, 0);
+    printf("============================================\n");
+
+
+    MPI_Finalize();
     return 0;
 }

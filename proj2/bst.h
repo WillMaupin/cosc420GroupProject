@@ -14,106 +14,102 @@ typedef struct BSTree {
 } BSTree;
 
 void initBST(BSTree *tree) {
-    // BSTNode root;
-    // initBSTNode(&root, 0);
-    // tree->root = &root;
-    //
-    // printf("bst init %d\n", tree->root->id);
-
     tree->root = NULL;
 }
 
-/*
-void insertBSTNode1(BSTree* tree, char* str){
-    BSTNode temp;
-    initBSTNode(&temp, str);
+/*insertBSTNode:
+    recursively inserts into tree alphabetically: words that appear
+    earlier alphabetically will be inserted to the left, words that appear
+    later will be inserted to the right.
 
-    BSTNode* ptr;
-    ptr = tree->root;
+    RETURNS:
+        BSTNode*: have to reassign tree when function is called...
+            not sure why...
 
-    printf("inserting: %s\n", temp.keyword);
-    if( ptr != NULL ) printf("comparing: %s\n", ptr->keyword);
+    ARGUMENTS:
+        parent_node: compare keyword of this node with node being inserted,
+            also used to point to node after being inserted
+        node: node to be inserted   */
 
-    if ( ptr == NULL ) {
-        //tree is empty, just need to insert node at root
-        printf("Empty tree\n");
-        tree->root = &temp;
-    } else {
-        printf("tree not empty\n");
-        int a = strcmp(ptr->keyword, str); //temp variable name, needs a better one
-        printf("%d\n", a);
-        if(a < 0){
-            //str comes before ptr->keyword alphabetically
-            printf("before\n");
+BSTNode* insertBSTNode(BSTNode *parent_node, BSTNode* node){
+    printf("Welcome to insertBSTNode!!!\n"); // dbugging
 
+    if(node != NULL)        printf("inserting: %s\n", node->keyword); // dbugging
+    if(parent_node != NULL) printf("comparing: %s\n", parent_node->keyword); //dbugging
 
-        } else if (a > 0){
-            //str comes before ptr->keyword alphabetically
-            printf("after\n");
+    if(parent_node == NULL) {
+        /*  tree is empty, just need to insert node at root */
+        printf("Empty tree\n"); //dbugging
+        return node;
+    }else{
+        /* tree is not empty */
 
-
-        } else {
-            // str and ptr->key word are the same words
-            printf("equal\n");
-
-
-        }
-    }
-}
-*/
-
-
-void insertBSTNode2(BSTNode *root_node, BSTNode* node){
-    printf("Welcome to insertBSTNode2!!!\n");
-    // BSTNode* ptr;
-    // ptr = root;
-
-    printf("before\n");
-    if(node != NULL) printf("inserting: %s\n", node->keyword);
-    printf("during\n");
-    if(root_node != NULL) printf("comparing: %s\n", root_node->keyword);
-    printf("after\n");
-
-    if ( root_node == NULL ) {
-        //root is empty, just need to insert node at root
-        root_node = node;
-        printf("Empty tree\n");
-    } else {
-        printf("tree not empty\n");
-        int a = strcmp(root_node->keyword, node->keyword); //temp variable name, needs a better one
-        printf("%d\n", a);
-        if(a < 0){
+        printf("tree not empty\n"); //dbugging
+        /* determines difference in ascii values between root keyword and keyword of
+            node being inserted */
+        int a = strcmp(parent_node->keyword, node->keyword); //temp variable name, needs a better one
+        printf("%d\n", a); //dbugging
+        if(a <= -1){
             //str comes before ptr->keyword alphabetically
             printf("after\n");
-            insertBSTNode2(root_node->left, node);
+            parent_node->right = insertBSTNode(parent_node->right, node);
+            return parent_node;
 
-        } else if (a > 0){
-            //str comes before ptr->keyword alphabetically
+        } else if (a >= 1){
+            //str comes after ptr->keyword alphabetically
             printf("before\n");
-            insertBSTNode2(root_node->right, node);
+            parent_node->left = insertBSTNode(parent_node->left, node);
+            return parent_node;
 
         } else {
-            // str and ptr->key word are the same words
+            // str and ptr->key word are the same word
             printf("equal\n");
-
+            return parent_node;
+            /* add article to nodes linked list here */
 
         }
     }
 
-    printf("end\n");
+    printf("end\n");    // dbugging
 }
 
-/*
-    TODO: ?
-*/
-void displayBST(BSTNode *node){
-    // BSTNode* ptr;
+/*displayBST:
 
-    if(node->left)  displayBST(node->left);
-    // printf("displayBST: ");
-    printf("%s\n", node->keyword);
-    // displayBSTNode(node);
-    if(node->right) displayBST(node->right);
+    recursively prints keywords of nodes in preorder
+
+    ARGUMENTS:
+        BSTNode *node:
+            node to recurse on (if it has any children)
+                or print keyword of.
+
+        int level:
+            level of tree (increases as you move down the tree,
+                s.t.:
+                    root is on level 0,
+                    roots children on level 1,
+                    roots grandchildren on level 2,
+                    etc.)
+*/
+void displayBST(BSTNode *node, int level){
+    // printf("a\n");
+    if(node->left != NULL){
+        // printf("b\n");
+        displayBST(node->left, level++);
+        // printf("c\n");
+    }
+    // printf("d\n");
+    if(node != NULL){
+        // printf("e\n");
+        printf("%d: %s\n", level, node->keyword);
+        // printf("f\n");
+    }
+    // printf("g\n");
+    if(node->right != NULL){
+        // printf("h\n");
+        displayBST(node->right, level++);
+        // printf("i\n");
+    }
+    // printf("j\n");
 
 }
 

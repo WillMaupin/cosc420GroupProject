@@ -14,22 +14,27 @@ typedef struct HashMap {
 } HashMap;
 
 /*
+    assigns key value to bucket based on keyword string
+    ex:
 */
 void hash(HashMap* map, Node* node){
     int len = strlen(node->data);
     int key = 1;
 
+    /* multiply ascii values of all chars in word*/
     for(int i=0; i<len; i++){
-        // printf("%c: %d\n", data[i], data[i]);
         key *= node->data[i];
         printf("%d\n", key);
     }
 
+    /* mod by table size so that each bucket is numbered 0-N, where N is the
+    size of the table*/
     key %= map->size;
-    node->key = key;
+    node->key = key;    //assign key to bucket
+
+    /* debugging statements*/
     printf("key: %d\n", key);
     printf("key: %d\n", node->key);
-    // return key;
 }
 
 /*
@@ -51,16 +56,15 @@ void initHashMap(HashMap* map, int size){
     // printf("%d\n", map->head->key);
 
     for(int i=1; i<size; i++){
-        Node temp;
-        initBucket(&temp, i);
-        Node* ptr = map->head;
+        // Node temp;
+        // initBucket(&temp, i);
+        // Node* ptr = map->head;
         // if(ptr){printf("next\n");}
 
-        while(ptr->next){
-            printf("one\n");
-            ptr = ptr->next;
-        }
-        printf("here\n");
+        // while(ptr->next){
+            // printf("one\n");
+            // ptr = ptr->next        }
+        // printf("here\n");
     }
 }
 

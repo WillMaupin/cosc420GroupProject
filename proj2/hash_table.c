@@ -103,7 +103,7 @@ void initTable(struct Table *T, int n){
 }
 
 void printArticle(struct Table *T, char* id){
-	
+
 }
 
 #endif
