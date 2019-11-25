@@ -6,10 +6,17 @@
 #include "node.h"
 
 int main(){
-    HashMap map;        // = malloc(sizeof(HashMap));
-    initHashMap(&map, 23);
+    HashTable t;        // = malloc(sizeof(HashTable));
+    // initHashTable(&map, 23);
+    // printf("%u\n", t.table);
+    initHashTable(&t, 4);
+    // printf("%u\n", t.table);
 
-    // printf("%s\n", map.head->data);
+
+    // printf("hello\n");
+    // if(map.head)    printf("%d\n", map.head->key); 
+    // if(map.head)    printf("HEAD\n"); 
+    // printf("final\n");
 
     return 0;
 }
