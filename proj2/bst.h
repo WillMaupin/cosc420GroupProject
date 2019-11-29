@@ -1,165 +1,15 @@
-<<<<<<< HEAD
-#ifndef BST
-#define BST
-
-#include<stdio.h>
-#include<stdlib.h>
-
-#include"BSTNode.h"
-
-typedef struct BSTree {
-    BSTNode* root;
-
-    // char*
-
-} BSTree;
-
-void initBST(BSTree *tree) {
-    tree->root = NULL;
-}
-
-/*insertBSTNode:
-    recursively inserts into tree alphabetically: words that appear
-    earlier alphabetically will be inserted to the left, words that appear
-    later will be inserted to the right.
-
-    RETURNS:
-        BSTNode*: have to reassign tree when function is called...
-            not sure why...
-
-    ARGUMENTS:
-        parent_node: compare keyword of this node with node being inserted,
-            also used to point to node after being inserted
-        node: node to be inserted   */
-BSTNode* insertBSTNode(BSTNode *root_node, BSTNode* new_node){
-    printf("Welcome to insertBSTNode!!!\n"); // dbugging
-
-    if(new_node != NULL)    printf("inserting: %s\n", new_node->keyword); // dbugging
-    if(root_node != NULL)   printf("comparing: %s\n", root_node->keyword); //dbugging
-
-    if(root_node == NULL) {
-        /*  tree is empty, just need to insert node at root */
-        printf("Empty tree\n"); //dbugging
-
-        // node = new_node;
-        return new_node;
-    }else{
-        /* tree is not empty */
-        printf("tree not empty\n"); //dbugging
-
-        /* determines difference in ascii values between root keyword and keyword of
-            node being inserted */
-        int key = strcmp(root_node->keyword, new_node->keyword);
-        printf("%d\n", key); //dbugging
-        if(key <= -1){
-            //str comes before ptr->keyword alphabetically
-            printf("after\n");
-
-            root_node->right = insertBSTNode(root_node->right, new_node);
-            return root_node;
-
-        } else if (key >= 1){
-            //str comes after ptr->keyword alphabetically
-            printf("before\n");
-
-            root_node->left = insertBSTNode(root_node->left, new_node);
-            return root_node;
-
-        } else {
-            // str and ptr->key word are the same word
-            printf("equal\n");
-
-            /* add article to nodes linked list here */
-            return root_node;
-        }
-    }
-
-    printf("end\n");    // dbugging
-}
-
-/*
-    tried to rework insertion with this function, to make the function calls
-    simpler and remove need to explicitly declare a new node for each
-    keyword
-        BSTNode a = {...};
-            vs.
-        insert(tree, <keyword string>);
-
-    idea is to initialize new node in this function, actual insertion is
-    done in insertBSTNode
-    much of this function is debugging code, left pointer is not NULL
-    in main function, shows to be null here though...
-    not sure what is going on or why it is happening
-
-
-*/
-BSTNode* insert(BSTree tree, char* str){
-    BSTNode new_node;      //new node to be inserted
-    initBSTNode(&new_node, str);    //set keyword to str, else to NULL
-
-    /*  debugging
-    printf("new_node: %s\n", new_node.keyword);
-    if(new_node.left != NULL)       printf("new_node.left\n");
-    if(new_node.right != NULL)      printf("new_node.right\n");
-    if(new_node.articles != NULL)   printf("new_node.articles \n");
-
-    BSTNode* hold = insertBSTNode(tree.root, &new_node); //used in debugging
-    if(hold->left != NULL)          printf("hold->left\n");
-    if(hold->right != NULL)         printf("hold->right\n");
-    if(hold->articles != NULL)      printf("hold->articles \n");
-    return hold;     //debugging
-
-    debug code ends here*/
-
-    return insertBSTNode(tree.root, &new_node); //remove to test code above
-
-}
-
-/*displayBST:
-
-    recursively prints keywords of nodes in preorder
-
-    ARGUMENTS:
-        BSTNode *node:
-            node to recurse on (if it has any children)
-                or print keyword of.
-
-        int level:
-            level of tree (increases as you move down the tree,
-                s.t.:
-                    root is on level 0,
-                    roots children on level 1,
-                    roots grandchildren on level 2,
-                    etc.)
-*/
-void displayBST(BSTNode *node, int level){
-    printf("a\n");
-    if(node->left != NULL){
-        printf("b\n");
-        // displayBST(node->left, level++);
-        printf("c\n");
-    }
-    printf("d\n");
-
-    if(node != NULL){
-        printf("e\n");
-        printf("%d: %s\n", level, node->keyword);
-        printf("f\n");
-    }
-    else{  printf("null\n"); }  //debugging
-    printf("g\n");
-
-    if(node->right != NULL){
-        printf("h\n");
-        displayBST(node->right, level++);
-        printf("i\n");
-    }
-    printf("j\n");
-}
-
-=======
 #ifndef BST_H
 #define BST_H
+
+#include<string.h>
+
+/*
+		TRIED TO DOCUMENT AS MUCH AS I COULD, WAS UNCLEAR ABOUT SOME FUNTIONS,
+		TRIED TO USE ??? TO INDICATE WHERE I WAS UNCLEAR.
+
+		FEEL FREE TO ADD/CHANGE/REMOVE AS YOU FEEL
+		-SB
+*/
 
 /*
 typedef struct ReferencesBST{
@@ -169,68 +19,109 @@ typedef struct ReferencesBST{
 }ref;
 */
 
-typedef struct ArticleBST{
-	char* id;
-	struct ArticleBST *left;
-	struct ArticleBST *right;
-	//ref *references;	//search tree of references
+
+typedef struct ArticleBST {
+	char* id;					//id of article
+	struct ArticleBST *left;	//pointer to left article subtree
+	struct ArticleBST *right;	//pointer to right article subtree
 }article;
 
-typedef struct BST
-{
-	char* keyword;
-	struct BST *left;
-	struct BST *right;
-	article *articles; //search tree of articles
+typedef struct BST {
+	char* keyword;		//keyword used
+	struct BST *left; 	//left subtree
+	struct BST *right; 	//right subtree
+	article *articles;	//search tree of articles
 }node;
- 
+
+//function prototypes
 node *createNode();
 article *createArticle();
-node *insertNode(node *,node *, article *);
-void insertArticle(article *root, article *new_node);
-void printNodes(node *);
-void printArticles(article *);
-void mergeTrees(node *, node*);
-void mergeArticles(article *, article*);
+node *insertNode(node*, node*, article*);
+void insertArticle(article*, article*);
+void printNodes(node*);
+void printArticles(article*);
+void mergeTrees(node*, node*);
+void mergeArticles(article*, article*);
 
-article *createArticle(char* id){
-	article *temp;
-	temp = (article*)malloc(sizeof(article));
-	temp->id = malloc(sizeof(char)*20);
-	
-	for(int i = 0; i < 20; i++){
-		temp->id[i] = id[i];
-		if(id[i] == '\0')
-			i = 20;
-	}
+//function declarations
 
-	temp->left=temp->right=NULL;
+/* createArticles
+	create article pointer and assign id variable, along with
+
+	ARGUMENTS:
+		id: char*;
+
+	RETURNS:
+		article*: returns newly created article pointer
+*/
+article* createArticle(char* id){
+	article *temp; //node used to store article id
+	temp = (article*)malloc(sizeof(article)); //allocate memory for temp
+	temp->id = malloc(sizeof(char)*20);	//allocate memory for article id
+
+	strcpy(temp->id, id);
+	// printf("copied: %s\n", temp->id);	// debugging
+
+	// for(int i = 0; i < 20; i++){
+	// 	temp->id[i] = id[i];
+	// 	if(id[i] == '\0')
+	// 		i = 20;
+	// }
+
+	temp->left=temp->right=NULL; //left and right subtrees are empty
 	return temp;
 }
 
+/* createNode
+	creates node storing article BSTs and keyword BSTs
+	ARGUMENTS:
+		str: char*; the keyword to be assigned to node->keyword
+
+	RETURN:
+		node*: points to newly created node */
 node *createNode(char* str){
-	node *temp;
-	temp=(node*)malloc(sizeof(node));
-	temp->keyword = malloc(sizeof(char)*20);
-	temp->articles = malloc(sizeof(article));
+	node *temp;	//node used to store str
+	temp=(node*)malloc(sizeof(node));	//dynamically allocate space in
+										//memory for temp
 
-	for(int i = 0; i < 20; i++){
-		temp->keyword[i] = str[i];
-		if(str[i] == '\0')
-			i = 20;
-	}
-	temp->articles = NULL;
-	temp->left=temp->right=NULL;
+	temp->keyword = malloc(sizeof(char)*20); //allocate space in memory to store keyword
+	temp->articles = malloc(sizeof(article)); //allocate memory for article pointers
+												// and article BSTs
+
+	strcpy(temp->keyword, str);
+	// printf("copied: %s\n", temp->id);	// debugging
+
+	//copy str to temp->keyword char by char
+	// for(int i = 0; i < 20; i++){
+	// 	temp->keyword[i] = str[i];
+	// 	if(str[i] == '\0')	//breaks from loop if string has been read
+	// 		i = 20;
+	// }
+
+	temp->articles = NULL;	//articles BST is empty
+	temp->left=temp->right=NULL;	//left and right subtrees are empty
 	return temp;
 }
- 
-node* insertNode(node *root,node *temp, article *article_node){
+
+/*	insertNode
+	insert node into bst
+	ARGUMENTS:
+		root: node pointer, root of tree which node will be inserted
+		article: node pointer, node contatining data to be inserted by (id?)
+		article_node: article to be added to articleBST via insertArticle()
+
+	RETURNS:
+		node*: (root of tree?)*/
+node* insertNode(node *root, node *temp, article *article_node){
+	//keyword of node to be inserted
 	int key = strcmp(temp->keyword, root->keyword);
+
 	if(key < 0){
+
 		if(root->left!=NULL){
 			insertNode(root->left,temp, article_node);
 		} else {
-			root->left=temp;	
+			root->left=temp;
 			if(root->left->articles == NULL)
 				root->left->articles = article_node;
 			else
@@ -260,14 +151,24 @@ node* insertNode(node *root,node *temp, article *article_node){
 	}
 }
 
+/* insertArticle
+	recurse through article BST and insert where appropriate
 
+	ARGUMENTS:
+		root: article bst pointer; used in recursion, will point to location
+			where article node will be inserted
+
+		temp: article node pointer: stores data to be inserted
+
+	RETURNS:
+		n/a */
 void insertArticle(article *root, article *temp){
 	int key = strcmp(temp->id, root->id);
 	if(key < 0){
 		if(root->left!=NULL)
 			insertArticle(root->left,temp);
 		else
-			root->left=temp;	
+			root->left=temp;
 	} else if(key > 0){
 		if(root->right!=NULL){
 			insertArticle(root->right,temp);
@@ -279,39 +180,73 @@ void insertArticle(article *root, article *temp){
 	}
 
 }
- 
+
+/* printNodes
+	recursively prints nodes of bst in PREORDER
+	ACCEPTS:
+		root: node pointer; node containing keyword to be printed
+	RETURNS:
+		n/a	*/
 void printNodes(node *root){
-	if(root!=NULL){
-		printf("%s ",root->keyword);
-		printNodes(root->left);
-		printNodes(root->right);
+	if(root!=NULL){	//make sure root is not NULL
+		printf("%s ",root->keyword);	//print roots keyword
+		printNodes(root->left);		//recurse down left subtree
+		printNodes(root->right);	//recurse down right subtree
 	}
 }
 
+/* printArticles
+	recursively prints articles and their id's in PREORDER
+
+	ACCEPTS:
+		root: article pointer; node containing article ids to be printed
+	RETURNS:
+		n/a  */
 void printArticles(article *root){
-	if(root != NULL){
-		printf("%s ", root->id); 
-		printArticles(root->left);
-		printArticles(root->right);
+	if(root != NULL){	//make sure root article is not NULL
+		printf("%s ", root->id);	//print root articles id
+		printArticles(root->left);	//recurse down left subtree
+		printArticles(root->right);	//recurse down right subtree
 	}
 }
 
+/* mergeTrees
+	NOTE: NOT SURE I UNDERSTAND WHAT IS HAPPENING IN THIS FUNCTION,
+			??? WHERE I AM UNCLEAR -SB
+	merge two BSTs, used when combining two proc.s respective BSTs
+
+	ACCEPTS:
+		major: node pointer; "master" nodes, ???
+
+		minor: node pointer; node being merged into major???
+			NOTE: will we want to delete minor after merging to prevent
+				data leaks?
+
+	RETURNS:
+		n/a */
 void mergeTrees(node *major, node *minor){
 	node *temp;
-	if(minor != NULL){
-		temp = insertNode(major, minor, minor->articles);
+	if(minor != NULL){	//make sure minor is not an empty tree
+		temp = insertNode(major, minor, minor->articles);	//???
 		//mergeArticles(temp->articles, minor->articles);
-		mergeTrees(major, minor->left);
-		mergeTrees(major, minor->right);
+		mergeTrees(major, minor->left);	//recurse down left subtree
+		mergeTrees(major, minor->right);	//recurse down right subtree
 	}
 }
 
+/* mergeArticles
+	copies articles from ??? to root->articles
+	ARGUMENTS:
+		root: node pointer; node containing "master" article list,
+			articles will be copied into root->articles
+		A: article BST pointer; article to be added to root->articles
+	RETURNS:
+		n/a */
 void mergeArticles(article *root, article* A){
-	if(A != NULL){
-		insertArticle(root, A);
-		mergeArticles(root, A->left);
-		mergeArticles(root, A->right);
+	if(A != NULL){	//make sure there are articles let to be copied
+		insertArticle(root, A);	//add article to root->articles
+		mergeArticles(root, A->left);	//recurse down left subtree of A
+		mergeArticles(root, A->right);	//recures down right subtree of A
 	}
 }
->>>>>>> 2b05534fcf99c4fbdab6acacf933885d4d0b45d9
 #endif
