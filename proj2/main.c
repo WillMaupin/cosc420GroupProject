@@ -5,12 +5,12 @@
 #include "bst.h"
 
 int main(){
-	node *root=NULL, *temp, *root2=NULL;
+	node *root=NULL, *temp, *root2=NULL, *root3=NULL;
 	article *rootArticle=NULL, *tempArticle;
 	char* str = malloc(sizeof(char)*20);
 	char* id = malloc(sizeof(char)*20);
-	sprintf(str, "sean");
-	sprintf(id, "1830.3195");
+	sprintf(str, "sean:");
+	//sprintf(id, "1830.3195");
 	temp=createNode(str);
 	tempArticle = createArticle(id);
 
@@ -19,11 +19,11 @@ int main(){
 				 //than it was worth
 	root->articles = tempArticle;
 
-	sprintf(id, "penis-tiddies");
+	sprintf(id, "the weed");
 	tempArticle = createArticle(id);
 	insertNode(root, temp, tempArticle);
 
-	sprintf(id, "testacle-tiddies");
+	sprintf(id, "im calling");
 	tempArticle = createArticle(id);
 	insertNode(root, temp, tempArticle);
 
@@ -31,24 +31,34 @@ int main(){
 
 
 	temp = createNode(str); //create a second tree to test merging
-	//sprintf(str, "will");
-	sprintf(id, "1111.1111");
-	//temp = createNode(str);
+	sprintf(str, "matt:");
+	sprintf(id, "police");
+	temp = createNode(str);
 	tempArticle = createArticle(id);
 	
 	root2 = temp;
 	root2->articles = tempArticle;
 
-	sprintf(id, "2222.2222");
+	sprintf(id, "is that a");
 	tempArticle = createArticle(id);
 	insertNode(root2, temp, tempArticle);
 
-	
-	mergeTrees(root, root2);
+	sprintf(str, "will:");
+	sprintf(id, "420 what you smokin");
+	temp = createNode(str);
+	tempArticle = createArticle(id);
+	root3 = temp;
+	root3->articles = tempArticle;
+	insertNode(root3, temp, tempArticle);
 
+	mergeTrees(root, root2);
+	mergeTrees(root, root3);
+	FILE *fp;
+	fp = fopen("treez.txt", "w");
 	printf("preorder traversal\n");
 	printNodes(root);
 	printArticles(root->articles);
+	writeWords(root, fp);
 	printf("\n");
 	return 0;
 }
