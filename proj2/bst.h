@@ -32,6 +32,73 @@ void printNodes(node *);
 void printArticles(article *);
 void mergeTrees(node *, node*);
 void mergeArticles(article *, article*);
+void writeWords();
+void writeArticles();
+void readMetaData();
+
+/*void readMetaData(MPI_Comm world, int rank, int nprocs){
+    int i, send=0, j;
+    unsigned long long indexArr[2] = {0,0};
+    MPI_File input; 
+    MPI_File_open(world, "arxiv-metadata.txt", MPI_MODE_RDONLY, MPI_INFO_NULL, &input);
+    if(rank == 0){
+     int distr = maxNumLines/nprocs;
+     int procDistr = distr;
+     char c;
+     unsigned long long index = 0;
+     for(i=0; i<maxNumLines; i++){
+       while(1){
+	 MPI_File_read(input, &c, 1, MPI_CHAR, MPI_STATUS_IGNORE);
+	// printf("%c", c);
+	 indexArr[1]++;
+	 if(c == '\n')
+	   break;
+	 if(c == '+' && i > procDistr){
+	   printf("hello");
+	    for(j=0; j<5; j++){
+	       MPI_File_read(input, &c, 1, MPI_CHAR, MPI_STATUS_IGNORE);
+			  printf("hello\n");
+			  indexArr[1]++;
+			  if(c != '+')
+			    j = 6;
+			    
+	    }
+	    if(j == 5){
+	       indexArr[1]-1;
+	       MPI_Send(&indexArr[0], 2, MPI_UNSIGNED_LONG_LONG, send,0, world);
+	       printf("hello\n");
+	       indexArr[0] = indexArr[1]+1;
+	       send++;
+	       procDistr += distr; 
+	    }
+       }	
+     }
+   }
+}*/
+
+//Inorder traversal of articles written to "test.txt"
+void writeArticles(article *root, FILE *fp){
+	if(root != NULL)
+	{
+		writeArticles(root->left, fp);
+		writeArticles(root->right, fp);
+		fprintf(fp, "%s", root->id);
+		fprintf(fp, " ");
+	}
+}
+
+//Inorder traversal of words written to "test.txt"
+void writeWords(node *root, FILE *fp){
+	if(root != NULL)
+	{
+		writeWords(root->left, fp);
+		writeWords(root->right, fp);
+		fprintf(fp, "%s", root->keyword);
+		fprintf(fp, " ");
+		writeArticles(root->articles, fp);
+		fprintf(fp, "\n");
+	}
+}
 
 article *createArticle(char* id){
 	article *temp;
