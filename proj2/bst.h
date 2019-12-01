@@ -89,7 +89,7 @@ void searchBST(node *root, char *word){
 			}
 			else{
 				printf("Couldn't find\n");
-				exit(1);
+				return;
 			}
 		}
 		else if(c>0){
@@ -98,14 +98,14 @@ void searchBST(node *root, char *word){
 			}
 			else{
 				printf("Couldn't find\n");
-				exit(1);
+				return;
 			}
 		}
 	}
 	if(c==0){
 		printArticles(curr->articles);
 		printf("\n");
-		exit(0);
+		return;
 	}
 }
 
