@@ -76,6 +76,39 @@ void readMetaData();
    }
 }*/
 
+//Searches based on keyword entered by user and prints all articles associated with that word
+void searchBST(node *root, char *word){
+	node *curr=root;
+	int c;
+	//printf("HERE %s\n", curr->keyword);
+	while((c=strcmp(word, curr->keyword)) != 0)
+	{
+		if(c<0){
+			if(curr->left != NULL){
+				curr=curr->left;
+			}
+			else{
+				printf("Couldn't find\n");
+				exit(1);
+			}
+		}
+		else if(c>0){
+			if(curr->right != NULL){
+				curr=curr->right;
+			}
+			else{
+				printf("Couldn't find\n");
+				exit(1);
+			}
+		}
+	}
+	if(c==0){
+		printArticles(curr->articles);
+		printf("\n");
+		exit(0);
+	}
+}
+
 void buildBST(node *root, FILE *fp){
 	char *a;
 	char c, d[20];
