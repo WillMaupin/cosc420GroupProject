@@ -97,6 +97,7 @@ void buildBST(node *root, FILE *fp){
 				{
 					d[i] = '\0';
 				}
+				count=0;
 			}
 			else
 			{
