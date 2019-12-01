@@ -1,16 +1,6 @@
 #ifndef BST_H
 #define BST_H
 
-#include<string.h>
-
-/*
-		TRIED TO DOCUMENT AS MUCH AS I COULD, WAS UNCLEAR ABOUT SOME FUNTIONS,
-		TRIED TO USE ??? TO INDICATE WHERE I WAS UNCLEAR.
-
-		FEEL FREE TO ADD/CHANGE/REMOVE AS YOU FEEL
-		-SB
-*/
-
 /*
 typedef struct ReferencesBST{
 	char* id;
@@ -19,109 +9,188 @@ typedef struct ReferencesBST{
 }ref;
 */
 
-
-typedef struct ArticleBST {
-	char* id;					//id of article
-	struct ArticleBST *left;	//pointer to left article subtree
-	struct ArticleBST *right;	//pointer to right article subtree
+typedef struct ArticleBST{
+	char* id;
+	struct ArticleBST *left;
+	struct ArticleBST *right;
+	//ref *references;	//search tree of references
 }article;
 
-typedef struct BST {
-	char* keyword;		//keyword used
-	struct BST *left; 	//left subtree
-	struct BST *right; 	//right subtree
-	article *articles;	//search tree of articles
+typedef struct BST
+{
+	char* keyword;
+	struct BST *left;
+	struct BST *right;
+	article *articles; //search tree of articles
 }node;
-
-//function prototypes
+ 
 node *createNode();
 article *createArticle();
-node *insertNode(node*, node*, article*);
-void insertArticle(article*, article*);
-void printNodes(node*);
-void printArticles(article*);
-void mergeTrees(node*, node*);
-void mergeArticles(article*, article*);
+node *insertNode(node *,node *, article *);
+void insertArticle(article *root, article *new_node);
+void printNodes(node *);
+void printArticles(article *);
+void mergeTrees(node *, node*);
+void mergeArticles(article *, article*);
+void writeWords();
+void writeArticles();
+void readMetaData();
 
-//function declarations
+/*void readMetaData(MPI_Comm world, int rank, int nprocs){
+    int i, send=0, j;
+    unsigned long long indexArr[2] = {0,0};
+    MPI_File input; 
+    MPI_File_open(world, "arxiv-metadata.txt", MPI_MODE_RDONLY, MPI_INFO_NULL, &input);
+    if(rank == 0){
+     int distr = maxNumLines/nprocs;
+     int procDistr = distr;
+     char c;
+     unsigned long long index = 0;
+     for(i=0; i<maxNumLines; i++){
+       while(1){
+	 MPI_File_read(input, &c, 1, MPI_CHAR, MPI_STATUS_IGNORE);
+	// printf("%c", c);
+	 indexArr[1]++;
+	 if(c == '\n')
+	   break;
+	 if(c == '+' && i > procDistr){
+	   printf("hello");
+	    for(j=0; j<5; j++){
+	       MPI_File_read(input, &c, 1, MPI_CHAR, MPI_STATUS_IGNORE);
+			  printf("hello\n");
+			  indexArr[1]++;
+			  if(c != '+')
+			    j = 6;
+			    
+	    }
+	    if(j == 5){
+	       indexArr[1]-1;
+	       MPI_Send(&indexArr[0], 2, MPI_UNSIGNED_LONG_LONG, send,0, world);
+	       printf("hello\n");
+	       indexArr[0] = indexArr[1]+1;
+	       send++;
+	       procDistr += distr; 
+	    }
+       }	
+     }
+   }
+}*/
 
-/* createArticles
-	create article pointer and assign id variable, along with
+void buildBST(node *root, FILE *fp){
+	char *a;
+	char c, d[20];
+	int i, count = 0;
+	int newline = 1; //bool to determine if node is to be 				 //created
+	article *tempArticle=NULL;
+	node *temp=NULL;
+	while((c = fgetc(fp)) != EOF)
+	{
+		printf("d=%s\n", d);
+		if(c == ' ')
+		{
+			if(newline == 1)
+			{
+				//a=d;
+				temp=createNode(d);
+				newline = 0;
+				for(i = 0; i<20; i++)
+				{
+					d[i] = '\0';
+				}
+			}
+			else
+			{
+				//a = d;
+				tempArticle=createArticle(d);
+				insertNode(root, temp, tempArticle);
+				for(i = 0; i<20; i++)
+				{
+					d[i] = '\0';
+				}
+				count=0;
+			
+			}
+		}
+		else if(c == '\n')
+		{
+			//a=d;
+			tempArticle=createArticle(d);
+			insertNode(root, temp, tempArticle);
+			for(i = 0; i<20; i++)
+			{
+				d[i] = '\0';
+			}
+			newline = 1;
+		}
+		else{
+			d[count] = c;
+			count++;
+		}
+	}
+}
 
-	ARGUMENTS:
-		id: char*;
+//Inorder traversal of articles
+void writeArticles(article *root, FILE *fp){
+	if(root != NULL)
+	{
+		writeArticles(root->left, fp);
+		writeArticles(root->right, fp);
+		fprintf(fp, "%s", root->id);
+		fprintf(fp, " ");
+	}
+}
 
-	RETURNS:
-		article*: returns newly created article pointer
-*/
-article* createArticle(char* id){
-	article *temp; //node used to store article id
-	temp = (article*)malloc(sizeof(article)); //allocate memory for temp
-	temp->id = malloc(sizeof(char)*20);	//allocate memory for article id
+//Inorder traversal of words
+void writeWords(node *root, FILE *fp){
+	if(root != NULL)
+	{
+		writeWords(root->left, fp);
+		writeWords(root->right, fp);
+		fprintf(fp, "%s", root->keyword);
+		fprintf(fp, " ");
+		writeArticles(root->articles, fp);
+		fprintf(fp, "\n");
+	}
+}
 
-	strcpy(temp->id, id);
-	// printf("copied: %s\n", temp->id);	// debugging
+article *createArticle(char* id){
+	article *temp;
+	temp = (article*)malloc(sizeof(article));
+	temp->id = malloc(sizeof(char)*20);
+	
+	for(int i = 0; i < 20; i++){
+		temp->id[i] = id[i];
+		if(id[i] == '\0')
+			i = 20;
+	}
 
-	// for(int i = 0; i < 20; i++){
-	// 	temp->id[i] = id[i];
-	// 	if(id[i] == '\0')
-	// 		i = 20;
-	// }
-
-	temp->left=temp->right=NULL; //left and right subtrees are empty
+	temp->left=temp->right=NULL;
 	return temp;
 }
 
-/* createNode
-	creates node storing article BSTs and keyword BSTs
-	ARGUMENTS:
-		str: char*; the keyword to be assigned to node->keyword
-
-	RETURN:
-		node*: points to newly created node */
 node *createNode(char* str){
-	node *temp;	//node used to store str
-	temp=(node*)malloc(sizeof(node));	//dynamically allocate space in
-										//memory for temp
+	node *temp;
+	temp=(node*)malloc(sizeof(node));
+	temp->keyword = malloc(sizeof(char)*20);
+	temp->articles = malloc(sizeof(article));
 
-	temp->keyword = malloc(sizeof(char)*20); //allocate space in memory to store keyword
-	temp->articles = malloc(sizeof(article)); //allocate memory for article pointers
-												// and article BSTs
-
-	strcpy(temp->keyword, str);
-	// printf("copied: %s\n", temp->id);	// debugging
-
-	//copy str to temp->keyword char by char
-	// for(int i = 0; i < 20; i++){
-	// 	temp->keyword[i] = str[i];
-	// 	if(str[i] == '\0')	//breaks from loop if string has been read
-	// 		i = 20;
-	// }
-
-	temp->articles = NULL;	//articles BST is empty
-	temp->left=temp->right=NULL;	//left and right subtrees are empty
+	for(int i = 0; i < 20; i++){
+		temp->keyword[i] = str[i];
+		if(str[i] == '\0')
+			i = 20;
+	}
+	temp->articles = NULL;
+	temp->left=temp->right=NULL;
 	return temp;
 }
-
-/*	insertNode
-	insert node into bst
-	ARGUMENTS:
-		root: node pointer, root of tree which node will be inserted
-		article: node pointer, node contatining data to be inserted by (id?)
-		article_node: article to be added to articleBST via insertArticle()
-
-	RETURNS:
-		node*: (root of tree?)*/
-node* insertNode(node *root, node *temp, article *article_node){
-	//keyword of node to be inserted
+ 
+node* insertNode(node *root,node *temp, article *article_node){
 	int key = strcmp(temp->keyword, root->keyword);
-
 	if(key < 0){
-
 		if(root->left!=NULL){
 			insertNode(root->left,temp, article_node);
 		} else {
-			root->left=temp;
+			root->left=temp;	
 			if(root->left->articles == NULL)
 				root->left->articles = article_node;
 			else
@@ -151,24 +220,14 @@ node* insertNode(node *root, node *temp, article *article_node){
 	}
 }
 
-/* insertArticle
-	recurse through article BST and insert where appropriate
 
-	ARGUMENTS:
-		root: article bst pointer; used in recursion, will point to location
-			where article node will be inserted
-
-		temp: article node pointer: stores data to be inserted
-
-	RETURNS:
-		n/a */
 void insertArticle(article *root, article *temp){
 	int key = strcmp(temp->id, root->id);
 	if(key < 0){
 		if(root->left!=NULL)
 			insertArticle(root->left,temp);
 		else
-			root->left=temp;
+			root->left=temp;	
 	} else if(key > 0){
 		if(root->right!=NULL){
 			insertArticle(root->right,temp);
@@ -180,73 +239,38 @@ void insertArticle(article *root, article *temp){
 	}
 
 }
-
-/* printNodes
-	recursively prints nodes of bst in PREORDER
-	ACCEPTS:
-		root: node pointer; node containing keyword to be printed
-	RETURNS:
-		n/a	*/
+ 
 void printNodes(node *root){
-	if(root!=NULL){	//make sure root is not NULL
-		printf("%s ",root->keyword);	//print roots keyword
-		printNodes(root->left);		//recurse down left subtree
-		printNodes(root->right);	//recurse down right subtree
+	if(root!=NULL){
+		printf("%s ",root->keyword);
+		printNodes(root->left);
+		printNodes(root->right);
 	}
 }
 
-/* printArticles
-	recursively prints articles and their id's in PREORDER
-
-	ACCEPTS:
-		root: article pointer; node containing article ids to be printed
-	RETURNS:
-		n/a  */
 void printArticles(article *root){
-	if(root != NULL){	//make sure root article is not NULL
-		printf("%s ", root->id);	//print root articles id
-		printArticles(root->left);	//recurse down left subtree
-		printArticles(root->right);	//recurse down right subtree
+	if(root != NULL){
+		printf("%s ", root->id); 
+		printArticles(root->left);
+		printArticles(root->right);
 	}
 }
 
-/* mergeTrees
-	NOTE: NOT SURE I UNDERSTAND WHAT IS HAPPENING IN THIS FUNCTION,
-			??? WHERE I AM UNCLEAR -SB
-	merge two BSTs, used when combining two proc.s respective BSTs
-
-	ACCEPTS:
-		major: node pointer; "master" nodes, ???
-
-		minor: node pointer; node being merged into major???
-			NOTE: will we want to delete minor after merging to prevent
-				data leaks?
-
-	RETURNS:
-		n/a */
 void mergeTrees(node *major, node *minor){
 	node *temp;
-	if(minor != NULL){	//make sure minor is not an empty tree
-		temp = insertNode(major, minor, minor->articles);	//???
+	if(minor != NULL){
+		temp = insertNode(major, minor, minor->articles);
 		//mergeArticles(temp->articles, minor->articles);
-		mergeTrees(major, minor->left);	//recurse down left subtree
-		mergeTrees(major, minor->right);	//recurse down right subtree
+		mergeTrees(major, minor->left);
+		mergeTrees(major, minor->right);
 	}
 }
 
-/* mergeArticles
-	copies articles from ??? to root->articles
-	ARGUMENTS:
-		root: node pointer; node containing "master" article list,
-			articles will be copied into root->articles
-		A: article BST pointer; article to be added to root->articles
-	RETURNS:
-		n/a */
 void mergeArticles(article *root, article* A){
-	if(A != NULL){	//make sure there are articles let to be copied
-		insertArticle(root, A);	//add article to root->articles
-		mergeArticles(root, A->left);	//recurse down left subtree of A
-		mergeArticles(root, A->right);	//recures down right subtree of A
+	if(A != NULL){
+		insertArticle(root, A);
+		mergeArticles(root, A->left);
+		mergeArticles(root, A->right);
 	}
 }
 #endif
