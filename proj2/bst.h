@@ -111,14 +111,19 @@ void searchBST(node *root, char *word){
 
 void buildBST(node *root, FILE *fp){
 	char *a;
-	char c, d[20];
+	char c;
+	char d[20];
+	for(int i=0; i<20; i++)
+	{
+		d[i] = '\0';
+	}
 	int i, count = 0;
 	int newline = 1; //bool to determine if node is to be 				 //created
 	article *tempArticle=NULL;
 	node *temp=NULL;
 	while((c = fgetc(fp)) != EOF)
 	{
-		printf("d=%s\n", d);
+		//printf("d=%s\n", d);
 		if(c == ' ')
 		{
 			if(newline == 1)
@@ -126,7 +131,7 @@ void buildBST(node *root, FILE *fp){
 				//a=d;
 				temp=createNode(d);
 				newline = 0;
-				for(i = 0; i<20; i++)
+				for(i = 0; i<count+1; i++)
 				{
 					d[i] = '\0';
 				}
@@ -137,7 +142,7 @@ void buildBST(node *root, FILE *fp){
 				//a = d;
 				tempArticle=createArticle(d);
 				insertNode(root, temp, tempArticle);
-				for(i = 0; i<20; i++)
+				for(i = 0; i<count+1; i++)
 				{
 					d[i] = '\0';
 				}
@@ -155,9 +160,11 @@ void buildBST(node *root, FILE *fp){
 				d[i] = '\0';
 			}
 			newline = 1;
+			count=0;
 		}
 		else{
 			d[count] = c;
+			//printf("newline = %d\n", newline);
 			count++;
 		}
 	}
