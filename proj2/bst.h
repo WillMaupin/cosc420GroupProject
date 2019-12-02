@@ -1,5 +1,8 @@
 #ifndef BST_H
 #define BST_H
+//#include"matrix.h"
+#define INDEX(n,m,i,j) m*i + j
+#define ACCESS(A,i,j) A->arr[INDEX(A->rows, A->cols, i, j)]
 
 /*
 typedef struct ReferencesBST{
@@ -8,6 +11,11 @@ typedef struct ReferencesBST{
 	struct ReferencesBST *right;
 }ref;
 */
+
+typedef struct matrix{
+  int rows, cols;
+  float* arr;
+} matrix;
 
 typedef struct ArticleBST{
 	char* id;
@@ -36,45 +44,108 @@ void writeWords();
 void writeArticles();
 void readMetaData();
 
-/*void readMetaData(MPI_Comm world, int rank, int nprocs){
-    int i, send=0, j;
-    unsigned long long indexArr[2] = {0,0};
-    MPI_File input; 
-    MPI_File_open(world, "arxiv-metadata.txt", MPI_MODE_RDONLY, MPI_INFO_NULL, &input);
-    if(rank == 0){
-     int distr = maxNumLines/nprocs;
-     int procDistr = distr;
-     char c;
-     unsigned long long index = 0;
-     for(i=0; i<maxNumLines; i++){
-       while(1){
-	 MPI_File_read(input, &c, 1, MPI_CHAR, MPI_STATUS_IGNORE);
-	// printf("%c", c);
-	 indexArr[1]++;
-	 if(c == '\n')
-	   break;
-	 if(c == '+' && i > procDistr){
-	   printf("hello");
-	    for(j=0; j<5; j++){
-	       MPI_File_read(input, &c, 1, MPI_CHAR, MPI_STATUS_IGNORE);
-			  printf("hello\n");
-			  indexArr[1]++;
-			  if(c != '+')
-			    j = 6;
-			    
-	    }
-	    if(j == 5){
-	       indexArr[1]-1;
-	       MPI_Send(&indexArr[0], 2, MPI_UNSIGNED_LONG_LONG, send,0, world);
-	       printf("hello\n");
-	       indexArr[0] = indexArr[1]+1;
-	       send++;
-	       procDistr += distr; 
-	    }
-       }	
-     }
-   }
+/*void my(matrix* A, int r, int c){
+  A->rows = r;
+  A->cols = c;
+  A->arr = malloc(r*c*sizeof(int));
+  int i,j;
+  ACCESS(A,0,0) = 0;
+  ACCESS(A,0,1) = 0;
+  ACCESS(A,0,2) = 1;
+  ACCESS(A,1,0) = 0;
+  ACCESS(A,1,1) = 0;
+  ACCESS(A,1,2) = 1;
+  ACCESS(A,2,0) = 0;
+  ACCESS(A,2,1) = 0;
+  ACCESS(A,2,2) = 0;
 }*/
+
+void initMatrix(matrix* A, int r, int c){
+  A->rows = r;
+  A->cols = c;
+  A->arr = malloc(r*c*sizeof(int));
+  int i,j;
+  for(i=0; i<r; i++)
+    for(j=0; j<c; j++)
+      ACCESS(A,i,j) = rand() % 10 + 1;
+}
+
+//initializes matrix with all values 1
+void initOneMatrix(matrix* A, int r, int c){
+  A->rows = r;
+  A->cols = c;
+  A->arr = malloc(r*c*sizeof(int));
+ 
+  int i,j;
+  for(i=0; i<r; i++)
+    for(j=0; j<c; j++)
+      ACCESS(A,i,j) = 1;
+}
+
+void initEmptyMatrix(matrix* A, int r, int c){
+  A->rows = r;
+  A->cols = c;
+  A->arr = malloc(r*c*sizeof(int));
+ 
+  int i,j;
+  for(i=0; i<r; i++)
+    for(j=0; j<c; j++)
+      ACCESS(A,i,j) = 0;
+}
+
+void printMatrix(matrix* A){
+  int i,j;
+  for(i=0; i<A->rows; i++){
+    for(j=0; j<A->cols; j++){
+      printf("%f ", ACCESS(A,i,j));
+    }
+    //printf("\n");
+    puts("");
+  }
+}
+
+//Pass in original matrix and one other. Transpose of matrix A will be written into matrix B
+void transpose(matrix* A, matrix* B){
+	int i,j;
+	for(i=0; i<A->cols; i++){
+		for(j=0; j<A->rows; j++){
+			int index = INDEX(A->rows, A->cols, i, j);
+			int index2 = INDEX(A->rows, A->cols, j, i);
+			B->arr[index] = A->arr[index2];
+   		}
+	}
+}
+
+void multMatrix(matrix* A, matrix* ones){
+	int i, j, add=0;
+	for(i=0; i<A->rows; i++){
+		for(j=0; j<A->cols; j++){
+			int index = INDEX(A->rows, A->cols, i, j);
+			int index2 = INDEX(ones->rows, ones->cols, i, 0);
+			add = add + (A->arr[index]*ones->arr[index2]);
+		}
+	ones->arr[i] = add;
+	add=0;
+	}
+}
+
+void hits(matrix* A, matrix *B, matrix *C){
+	transpose(A, B);
+	printf("\n");
+	printf("Matrix is: \n");
+	printMatrix(A);
+	printf("transpose is \n");
+	printMatrix(B);
+	//printf("\n");
+	multMatrix(B, C);
+	printf("Initial hub score is:\n");
+	printMatrix(C);
+	printf("\n");
+	multMatrix(A, C);
+	printf("Initial authority score is:\n");
+	printMatrix(C);
+	
+}
 
 //Searches based on keyword entered by user and prints all articles associated with that word
 void searchBST(node *root, char *word){
@@ -164,7 +235,6 @@ void buildBST(node *root, FILE *fp){
 		}
 		else{
 			d[count] = c;
-			//printf("newline = %d\n", newline);
 			count++;
 		}
 	}
