@@ -1,5 +1,6 @@
 #ifndef BST_H
 #define BST_H
+#include "matrixmult.h"
 //#include"matrix.h"
 #define INDEX(n,m,i,j) m*i + j
 #define ACCESS(A,i,j) A->arr[INDEX(A->rows, A->cols, i, j)]
@@ -12,10 +13,10 @@ typedef struct ReferencesBST{
 }ref;
 */
 
-typedef struct matrix{
+/*typedef struct matrix{
   int rows, cols;
   float* arr;
-} matrix;
+} matrix;*/
 
 typedef struct ArticleBST{
 	char* id;
@@ -44,7 +45,7 @@ void writeWords();
 void writeArticles();
 void readMetaData();
 
-/*void my(matrix* A, int r, int c){
+void my(matrix* A, int r, int c){
   A->rows = r;
   A->cols = c;
   A->arr = malloc(r*c*sizeof(int));
@@ -58,7 +59,7 @@ void readMetaData();
   ACCESS(A,2,0) = 0;
   ACCESS(A,2,1) = 0;
   ACCESS(A,2,2) = 0;
-}*/
+}
 
 void initMatrix(matrix* A, int r, int c){
   A->rows = r;
@@ -97,7 +98,7 @@ void printMatrix(matrix* A){
   int i,j;
   for(i=0; i<A->rows; i++){
     for(j=0; j<A->cols; j++){
-      printf("%f ", ACCESS(A,i,j));
+      printf("%d ", ACCESS(A,i,j));
     }
     //printf("\n");
     puts("");
@@ -129,21 +130,24 @@ void multMatrix(matrix* A, matrix* ones){
 	}
 }
 
-void hits(matrix* A, matrix *B, matrix *C){
-	transpose(A, B);
-	printf("\n");
-	printf("Matrix is: \n");
-	printMatrix(A);
-	printf("transpose is \n");
-	printMatrix(B);
-	//printf("\n");
-	multMatrix(B, C);
-	printf("Initial hub score is:\n");
-	printMatrix(C);
-	printf("\n");
-	multMatrix(A, C);
-	printf("Initial authority score is:\n");
-	printMatrix(C);
+void hits(matrix* A, matrix *B, matrix *C, matrix *T,int rank){
+	if(rank==0){
+		printf("Matrix is: \n");
+		printMatrix(A);
+		printf("transpose is \n");
+		transpose(A,T);
+		printMatrix(T);
+	}
+	matrixMult(T, B, C);
+	if(rank==0){
+		printf("Initial authority weights are:\n");
+		printMatrix(C);
+	}
+	matrixMult(A, C, B);
+	if(rank==0){
+		printf("Initial hub weights are:\n");
+		printMatrix(B);
+	}	
 	
 }
 
