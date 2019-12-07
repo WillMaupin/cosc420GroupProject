@@ -115,36 +115,52 @@ void transpose(matrix* A, matrix* B){
    		}
 	}
 }
-
-void multMatrix(matrix* A, matrix* ones){
-	int i, j, add=0;
+void normalize(matrix* A){
+	int i, j;
+	float add=0;
+	for(i=0; i<A->rows; i++){
+		for(j=0; j<A->cols; j++){
+			float flan = ACCESS(A, i, j);
+			flan = flan*flan;
+			add = add + flan;
+		}
+	}
+	add = sqrt(add);
 	for(i=0; i<A->rows; i++){
 		for(j=0; j<A->cols; j++){
 			int index = INDEX(A->rows, A->cols, i, j);
-			int index2 = INDEX(ones->rows, ones->cols, i, 0);
-			printf("Multiplying %f by %f\n", ones->arr[index2], A->arr[index]);
-			add = add + (A->arr[index]*ones->arr[index2]);
+			A->arr[index] = A->arr[index]/add;
 		}
-	ones->arr[i] = add;
-	add=0;
 	}
 }
 
-void hits(matrix* A, matrix *B, matrix *C){
-	transpose(A, B);
-	printf("\n");
-	printf("Matrix is: \n");
-	printMatrix(A);
-	printf("transpose is \n");
-	printMatrix(B);
-	//printf("\n");
-	multMatrix(B, C);
-	printf("Initial hub score is:\n");
-	printMatrix(C);
-	printf("\n");
-	multMatrix(A, C);
-	printf("Initial authority score is:\n");
-	printMatrix(C);
+float totalMatrix(matrix* A){
+	int i, add=0;
+	for(i=0; i<A->rows; i++){
+		int index = INDEX(A->rows, A->cols, i, 0);
+		add = add + A->arr[index];
+	}
+}
+
+//send in original matrix A, ones matrix B, empty matrix C, empty matrix T. Transpose matrix A and put result in matrix T. Multiply matrix T by ones matrix to get authority score placed in empty matrix C. Multiply C by original matrix A to get hub, placed in matrix B. Normalize B and C then repeat. 
+void hits(matrix* A, matrix *B, matrix *C, matrix *T){
+	int i=0;
+	float curr, former=0;
+	float compare = 1;
+	transpose(A,T);
+	while(1){
+		matrixMult(T, B, C);
+		matrixMult(A, C, B);
+		normalize(B);
+		normalize(C);
+		curr = totalMatrix(C);
+		if((curr - former) < .001){
+			printf("iterations = %d\n", i);
+			return;
+		}
+		former = curr;
+		i++;
+	}
 }
 
 //Searches based on keyword entered by user and prints all articles associated with that word
