@@ -144,9 +144,7 @@ float totalMatrix(matrix* A){
 
 //send in original matrix A, ones matrix B, empty matrix C, empty matrix T. Transpose matrix A and put result in matrix T. Multiply matrix T by ones matrix to get authority score placed in empty matrix C. Multiply C by original matrix A to get hub, placed in matrix B. Normalize B and C then repeat. 
 void hits(matrix* A, matrix *B, matrix *C, matrix *T){
-	int i=0;
 	float curr, former=0;
-	float compare = 1;
 	transpose(A,T);
 	while(1){
 		matrixMult(T, B, C);
@@ -154,10 +152,8 @@ void hits(matrix* A, matrix *B, matrix *C, matrix *T){
 		normalize(B);
 		normalize(C);
 		curr = totalMatrix(C);
-		if((curr - former) < .001){
-			printf("iterations = %d\n", i);
+		if((curr - former) < .001)
 			return;
-		}
 		former = curr;
 		i++;
 	}
