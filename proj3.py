@@ -53,7 +53,7 @@ if rank == 0:
 	plot.xlabel('Sample')
 	plot.ylabel('Amplitude')
 	#plot.subplot(212)
-	#plot.specgram(arr,44100)
+	#plot.specgram(arr,Fs=44100)
 	#plot.xlabel('Time')
 	#plot.ylabel('Frequency')
 
