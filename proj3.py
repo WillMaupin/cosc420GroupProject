@@ -17,6 +17,14 @@ sample_width = stream.getsampwidth()
 num_frames = stream.getnframes()
 total_samples = num_frames*num_channels
 
+#check sample type for stereo or mono to read data accordingly
+if sample_width == 1: 
+	fmt = "1B" 
+elif sample_width == 2:
+	fmt = "2h" 
+else:
+        raise ValueError("Only supports 8 and 16 bit audio formats.")
+
 #Set a var to = total file frames/world size for dividing tasks with mpi
 alloc = num_frames/size
 stream.setpos(rank * int(alloc))
@@ -28,27 +36,38 @@ count = 0
 while(stream.tell() < (rank+1) * int(alloc)):
 	
 	x = stream.readframes(1) 
-	integer_data = struct.unpack("2h", x)
+	integer_data = struct.unpack(fmt, x)
 	y = integer_data[0];
 	z = integer_data[1];
 	arr.append((y + z)/2) 
 
 stream.close()
 
+#newarr = []
+
 #Gather arrays from all nodes into one single array
-newarr = comm.gather(arr, root=0)
+arr = comm.gather(arr, root=0)
+newarr = []
+if rank==0:
+	for i in range(0,size):
+		for j in range(0, int(alloc)):
+			newarr.append(arr[i][j])
+
+'''for i in newarr:
+	print(newarr)
+	print(arr)
+	time.sleep(1)'''
 
 #Plot data 
 if rank == 0:
-	
 	#arr = arr.mean(axis=1)
 	plot.subplot(211)
 	plot.title('Spectrogram of a wav file')
-	plot.plot(arr)
+	plot.plot(newarr)
 	plot.xlabel('Sample')
 	plot.ylabel('Amplitude')
 	plot.subplot(212)
-	plot.specgram(arr,Fs=44100)
+	plot.specgram(newarr,Fs=44100)
 	plot.xlabel('Time')
 	plot.ylabel('Frequency')
 	plot.ylim((0, 15000))
